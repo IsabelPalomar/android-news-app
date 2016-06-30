@@ -49,6 +49,9 @@ public class NewsActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Fetch the news using ConnectivityManager
+     */
     private void fetchNews() {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -63,19 +66,20 @@ public class NewsActivity extends AppCompatActivity {
 
     }
 
-
     /**
      * Google News API client to send network requests
      */
     public class NewsClient extends AsyncTask<String, Void, JSONObject> {
 
         private static final String API_BASE_URL = "https://ajax.googleapis.com/";
+        private static final String API_PARAMETERS = "ajax/services/feed/load?v=1.0&q=";
+        private static final String RSS_SITE = "http://rss.nytimes.com/services/xml/rss/nyt/FashionandStyle.xml?json";
 
         @Override
         protected JSONObject doInBackground(String... query) {
 
             try {
-                return downloadUrl(API_BASE_URL + "ajax/services/feed/load?v=1.0&q=http://rss.nytimes.com/services/xml/rss/nyt/FashionandStyle.xml?json");
+                return downloadUrl(API_BASE_URL + API_PARAMETERS + RSS_SITE);
             } catch (IOException e) {
                 return null;
             }
@@ -87,11 +91,7 @@ public class NewsActivity extends AppCompatActivity {
 
             if (result != null) {
                 try {
-
-                    int totalItems = 10;
-
-                    if (totalItems != 0) {
-                        // Get the docs json array
+                        // Get the entries json array
                         JSONArray entries = result.getJSONArray("entries");
 
                         // Parse json array into array of model objects
@@ -99,23 +99,20 @@ public class NewsActivity extends AppCompatActivity {
                         // Remove all entries from the adapter
                         newsAdapter.clear();
                         // Load model objects into the adapter
-                        for (News n : news) {
-                            newsAdapter.add(n);
+                        for (News entry : news) {
+                            newsAdapter.add(entry);
                         }
                         newsAdapter.notifyDataSetChanged();
                         progressBar.setVisibility(ProgressBar.GONE);
-
-                    } else {
-                        Snackbar.make(lvNews, "No results found", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-
-
+            else {
+                Snackbar.make(lvNews, "No results found", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
         }
 
     }
@@ -147,6 +144,11 @@ public class NewsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Return the feed elements
+     * @param is - InputStream
+     * @return feed JSON Object
+     */
     private JSONObject readIt(InputStream is) {
 
         JSONObject jsonObject = null;
@@ -158,7 +160,6 @@ public class NewsActivity extends AppCompatActivity {
             while ((line = br.readLine()) != null) {
                 sb.append(line).append("\n");
             }
-
             jsonObject = new JSONObject(sb.toString()).getJSONObject("responseData").getJSONObject("feed");
 
         } catch (JSONException | IOException e) {

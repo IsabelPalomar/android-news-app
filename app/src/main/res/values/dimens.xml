@@ -5,6 +5,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="activity_small_margin">16dp</dimen>
-    <dimen name="image_size">56dp</dimen>
-    4
+    <dimen name="image_size">60dp</dimen>
 </resources>

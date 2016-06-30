@@ -50,6 +50,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
         // Populate the data into the template view using the data object
         viewHolder.tvTitle.setText(news.getTitle());
         viewHolder.tvContent.setText(news.getContentSnippet());
+
         //Picasso.with(getContext()).load(Uri.parse(news.getImageUrl())).error(R.drawable.app_img_default).into(viewHolder.ivImage);
         return convertView;
     }

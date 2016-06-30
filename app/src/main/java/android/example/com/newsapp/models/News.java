@@ -62,11 +62,11 @@ public class News {
     // Returns a Entry given the expected JSON
     public static News fromJson(JSONObject jsonObject) {
         News entry = new News();
-        JSONObject entryObj = null;
         JSONObject images = null;
 
         try {
-            //images = jsonObject.getJSONObject("mediaGroups").getJSONObject("contents");
+            //JSONArray imagesArr = jsonObject.getJSONArray("mediaGroups");
+            //images = imagesArr.getJSONObject(0).getJSONObject("contents");
 
             entry.title = jsonObject.has("title") ? jsonObject.getString("title") : "";
             entry.contentSnippet = jsonObject.has("contentSnippet") ? jsonObject.getString("contentSnippet") : "";
