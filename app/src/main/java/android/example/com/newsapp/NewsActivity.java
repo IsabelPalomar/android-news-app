@@ -23,12 +23,16 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class NewsActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
     private ListView lvNews;
     private NewsAdapter newsAdapter;
+    ScheduledExecutorService scheduleTaskExecutor;
 
 
     @Override
@@ -47,7 +51,26 @@ public class NewsActivity extends AppCompatActivity {
         //fetch default News
         fetchNews();
 
+        //Update the UI every 5 seconds
+        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run()
+            {
+                runOnUiThread(new Runnable(){
+                    @Override
+                    public void run() {
+                        new NewsClient().execute();
+                    }
+
+                });
+            }
+        }, 0, 5, TimeUnit.SECONDS);
+
+
+
     }
+
+
 
     /**
      * Fetch the news using ConnectivityManager
