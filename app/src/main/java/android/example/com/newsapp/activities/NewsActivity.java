@@ -1,6 +1,7 @@
-package android.example.com.newsapp;
+package android.example.com.newsapp.activities;
 
 import android.content.Context;
+import android.example.com.newsapp.R;
 import android.example.com.newsapp.adapters.NewsAdapter;
 import android.example.com.newsapp.models.News;
 import android.net.ConnectivityManager;
@@ -33,6 +34,7 @@ public class NewsActivity extends AppCompatActivity {
     private ListView lvNews;
     private NewsAdapter newsAdapter;
     ScheduledExecutorService scheduleTaskExecutor;
+    private static final int DELAY = 60;
 
 
     @Override
@@ -48,29 +50,21 @@ public class NewsActivity extends AppCompatActivity {
         newsAdapter = new NewsAdapter(this, arrNews);
         lvNews.setAdapter(newsAdapter);
 
-        //fetch default News
-        fetchNews();
-
-        //Update the UI every 5 seconds
-        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        //Update the UI every minute (60 seconds)
+        scheduleTaskExecutor = Executors.newScheduledThreadPool(1);
         scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
             public void run()
             {
                 runOnUiThread(new Runnable(){
                     @Override
                     public void run() {
-                        new NewsClient().execute();
+                        fetchNews();
                     }
-
                 });
             }
-        }, 0, 5, TimeUnit.SECONDS);
-
-
+        }, 0, DELAY, TimeUnit.SECONDS);
 
     }
-
-
 
     /**
      * Fetch the news using ConnectivityManager
@@ -85,8 +79,6 @@ public class NewsActivity extends AppCompatActivity {
             Snackbar.make(lvNews, "No connection", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
-
-
     }
 
     /**
@@ -155,9 +147,7 @@ public class NewsActivity extends AppCompatActivity {
             conn.setDoInput(true);
             // Starts the query
             conn.connect();
-            int response = conn.getResponseCode();
             is = conn.getInputStream();
-
             return readIt(is);
 
         } finally {

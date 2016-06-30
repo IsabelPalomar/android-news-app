@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
-    tools:context=".NewsActivity">
+    tools:context=".activities.NewsActivity">
 
     <ProgressBar
         android:id="@+id/progress_bar"

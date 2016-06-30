@@ -22,7 +22,6 @@ public class News {
     }
 
     public News() {
-
     }
 
     public String getTitle() {
@@ -62,23 +61,37 @@ public class News {
     // Returns a Entry given the expected JSON
     public static News fromJson(JSONObject jsonObject) {
         News entry = new News();
-        JSONObject images = null;
-
+        JSONObject contents = null;
         try {
-            //JSONArray imagesArr = jsonObject.getJSONArray("mediaGroups");
-            //images = imagesArr.getJSONObject(0).getJSONObject("contents");
 
+            contents = getImageUrl(jsonObject);
             entry.title = jsonObject.has("title") ? jsonObject.getString("title") : "";
             entry.contentSnippet = jsonObject.has("contentSnippet") ? jsonObject.getString("contentSnippet") : "";
-            /*if (images.has("url")) {
-                entry.imageUrl = images.getString("url");
-            }*/
+
+            if(contents != null){
+                if (contents.has("url"))
+                    entry.imageUrl = contents.getString("url");
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
         }
         return entry;
+    }
+
+    /**
+     * Returns the image URL based in the JSON object RSS hierarchy
+     */
+    private static JSONObject getImageUrl(JSONObject jsonObject) {
+
+        JSONObject contents = null;
+        try {
+            contents = jsonObject.getJSONArray("mediaGroups").getJSONObject(0).getJSONArray("contents").getJSONObject(0);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return contents;
     }
 
 }
