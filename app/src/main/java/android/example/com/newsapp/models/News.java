@@ -14,6 +14,14 @@ public class News {
     private String link;
     private String imageUrl;
 
+    private static final String ENTRY_MEDIA_NODE = "mediaGroups";
+    private static final String ENTRY_CONTENTS_NODE = "contents";
+
+    private static final String TITLE_ELEMENT_NAME = "title";
+    private static final String CONTENT_ELEMENT_NAME = "contentSnippet";
+    private static final String LINK_ELEMENT_NAME = "link";
+    private static final String IMAGE_ELEMENT_NAME = "url";
+
     public News(String title, String contentSnippet, String link, String imageUrl) {
         this.title = title;
         this.contentSnippet = contentSnippet;
@@ -65,12 +73,13 @@ public class News {
         try {
 
             contents = getImageUrl(jsonObject);
-            entry.title = jsonObject.has("title") ? jsonObject.getString("title") : "";
-            entry.contentSnippet = jsonObject.has("contentSnippet") ? jsonObject.getString("contentSnippet") : "";
+            entry.title = jsonObject.has(TITLE_ELEMENT_NAME) ? jsonObject.getString(TITLE_ELEMENT_NAME) : "";
+            entry.contentSnippet = jsonObject.has(CONTENT_ELEMENT_NAME) ? jsonObject.getString(CONTENT_ELEMENT_NAME) : "";
+            entry.link = jsonObject.has(LINK_ELEMENT_NAME) ? jsonObject.getString(LINK_ELEMENT_NAME) : "";
 
             if(contents != null){
-                if (contents.has("url"))
-                    entry.imageUrl = contents.getString("url");
+                if (contents.has(IMAGE_ELEMENT_NAME))
+                    entry.imageUrl = contents.getString(IMAGE_ELEMENT_NAME);
             }
 
         } catch (JSONException e) {
@@ -87,7 +96,7 @@ public class News {
 
         JSONObject contents = null;
         try {
-            contents = jsonObject.getJSONArray("mediaGroups").getJSONObject(0).getJSONArray("contents").getJSONObject(0);
+            contents = jsonObject.getJSONArray(ENTRY_MEDIA_NODE).getJSONObject(0).getJSONArray(ENTRY_CONTENTS_NODE).getJSONObject(0);
         } catch (JSONException e) {
             e.printStackTrace();
         }

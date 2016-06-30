@@ -1,6 +1,7 @@
 package android.example.com.newsapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.example.com.newsapp.R;
 import android.example.com.newsapp.models.News;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 
 
 public class NewsAdapter extends ArrayAdapter<News> {
+    Context context;
     private static class ViewHolder {
         public ImageView ivImage;
         public TextView tvTitle;
@@ -25,6 +27,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
 
     public NewsAdapter(Context context, ArrayList<News> arrNews) {
         super(context, 0, arrNews);
+        this.context = context;
     }
 
     @Override
@@ -50,6 +53,15 @@ public class NewsAdapter extends ArrayAdapter<News> {
         // Populate the data into the template view using the data object
         viewHolder.tvTitle.setText(news.getTitle());
         viewHolder.tvContent.setText(news.getContentSnippet());
+
+        convertView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(news.getLink()));
+                context.startActivity(browserIntent);
+            }
+
+        });
 
         Picasso.with(getContext()).load(Uri.parse(news.getImageUrl())).error(R.drawable.app_img_default).into(viewHolder.ivImage);
         return convertView;
